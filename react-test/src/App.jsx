@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import ManageProduct from './pages/ManageProduct.jsx';
 import Products from './pages/ProductsPage.jsx';
 import ProductsPage from './pages/ProductsPage.jsx';
+import ProductDetail from './pages/ProductDetail.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 
@@ -43,6 +44,7 @@ function App() {
             element={isAuth && userRole === 'manager' ? <ManageProduct /> : <Navigate to="/products" />} 
           />
           <Route path="products" element={<ProductsPage />} />
+          <Route path="products/:id" element={<ProductDetail />} />
           <Route path="about" element={<h1>About Page</h1>} />
           <Route path="*" element={<h1>404 Not Found</h1>} />
         </Route>

@@ -1,6 +1,7 @@
 import React from 'react';
 import './product.css';
 import Button from './Button'; 
+import { Link } from 'react-router-dom';
 
 
 function ProductList({ products, onDelete, onEdit, showActions = false }) {
@@ -25,26 +26,28 @@ function ProductList({ products, onDelete, onEdit, showActions = false }) {
 
           return (
             <div className="product-card" key={product.id}>
-              {product.image && (
-                <img 
-                  className="product-card__image"  
-                  src={imageSrc} 
-                  alt={product.name} 
-                  onError={(e) => { e.target.src = 'https://placehold.co/200x200?text=No+Image'; }}
-                />
-              )}
-              
-              <div className="product-card__content">
-                <h3 className="product-card__name">{product.name}</h3>
-                <p className="product-card__price">{product.price}K</p>
-                
-                {showActions && onDelete && (
-                  <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
-                    <Button variant="edit" onClick={() => onEdit(product)}>Edit</Button>
-                    <Button variant="danger" onClick={() => onDelete(product.id)}>Delete</Button>
-                  </div>
+              <Link to={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                {product.image && (
+                  <img 
+                    className="product-card__image"  
+                    src={imageSrc} 
+                    alt={product.name} 
+                    onError={(e) => { e.target.src = 'https://placehold.co/200x200?text=No+Image'; }}
+                  />
                 )}
-              </div>
+                
+                <div className="product-card__content">
+                  <h3 className="product-card__name">{product.name}</h3>
+                  <p className="product-card__price">{product.price}K</p>
+                </div>
+              </Link>
+                
+              {showActions && onDelete && (
+                <div style={{ display: 'flex', gap: '10px', marginTop: '8px', padding: '0 10px 10px' }}>
+                  <Button variant="edit" onClick={() => onEdit(product)}>Edit</Button>
+                  <Button variant="danger" onClick={() => onDelete(product.id)}>Delete</Button>
+                </div>
+              )}
             </div>
           );
         })}

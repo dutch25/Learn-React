@@ -53,7 +53,12 @@ module.exports = {
 
   findOne: async function (req, res) {
     try {
-      const product = await Product.findOne({ id: req.params.id });
+      // Gọi helper vừa tạo
+      const product = await sails.helpers.cacheProduct(req.params.id)
+        .tolerate('notFound', () => {
+          return null; // Trả về null nếu helper throw "notFound"
+        });
+
       if (!product) return res.notFound('Không tìm thấy sản phẩm');
       return res.json(product);
     } catch (err) {
