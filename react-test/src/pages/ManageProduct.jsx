@@ -3,11 +3,16 @@ import ProductList from '../components/ProductList';
 import ProductForm from '../components/productForm';
 import useProducts from '../hooks/useProducts';
 import axios from 'axios';
+import Pagination from '../components/Pagination';
 
 export default function ManageProduct() {
-  const { products, setProducts, isLoading, error, fetchProducts, pagination } = useProducts();
+  const { products, setProducts, isLoading, error, fetchProducts, pagination, categories, fetchCategories } = useProducts();
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
@@ -29,6 +34,10 @@ export default function ManageProduct() {
       const token = localStorage.getItem('token');
       formData.append('name', productData.name);
       formData.append('price', Number(productData.price));
+      
+      if (productData.category) {
+        formData.append('category', productData.category);
+      }
 
       if (productData.image) {
         formData.append('image', productData.image);
@@ -38,7 +47,13 @@ export default function ManageProduct() {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      fetchProducts(pagination.page, searchTerm);
+      if (products.length === pagination.limit) {
+        fetchProducts(pagination.totalPages + 1, searchTerm);
+      } else {
+        fetchProducts(pagination.totalPages || 1, searchTerm);
+      }
+      
+      fetchCategories();
       alert("Thêm sản phẩm thành công!");
     } catch (err) {
       console.error("Lỗi khi thêm sản phẩm:", err);
@@ -60,6 +75,8 @@ export default function ManageProduct() {
       } else {
         fetchProducts(pagination.page, searchTerm);
       }
+      
+      fetchCategories();
 
       alert("Xóa sản phẩm thành công!");
     } catch (err) {
@@ -77,6 +94,10 @@ export default function ManageProduct() {
       formData.append('name', productData.name);
       formData.append('price', Number(productData.price));
 
+      if (productData.category) {
+        formData.append('category', productData.category);
+      }
+
       if (productData.image instanceof File) {
         formData.append('image', productData.image);
       }
@@ -87,6 +108,8 @@ export default function ManageProduct() {
 
       setProducts(products.map(p => p.id === id ? response.data : p));
       setEditingProduct(null);
+      fetchProducts(pagination.page, searchTerm);
+      fetchCategories();
       alert("Cập nhật sản phẩm thành công!");
     } catch (err) {
       console.error("Lỗi 404 hoặc lỗi khác:", err.response);
@@ -123,7 +146,8 @@ export default function ManageProduct() {
         onAddProduct={handleAddProduct}
         onUpdateProduct={handleUpdateProduct}
         editProduct={editingProduct}
-        onCancelEdit={handleCancelEdit}
+        onCancelEdit={() => setEditingProduct(null)}
+        categories={categories}
       />
       <ProductList
         products={products}
@@ -131,31 +155,10 @@ export default function ManageProduct() {
         onEdit={handleEditProduct}
         showActions={true}
       />
-      <div className="pagination">
-        <button
-          disabled={pagination.page === 1}
-          onClick={() => handlePageChange(pagination.page - 1)}
-        >
-          Trước
-        </button>
-
-        {[...Array(pagination.totalPages)].map((_, index) => (
-          <button
-            key={index}
-            className={pagination.page === index + 1 ? 'active' : ''}
-            onClick={() => handlePageChange(index + 1)}
-          >
-            {index + 1}
-          </button>
-        ))}
-
-        <button
-          disabled={pagination.page === pagination.totalPages || pagination.totalPages === 0}
-          onClick={() => handlePageChange(pagination.page + 1)}
-        >
-          Sau
-        </button>
-      </div>
+      <Pagination 
+        pagination={pagination} 
+        onPageChange={handlePageChange} 
+      />
     </div>
   );
 }

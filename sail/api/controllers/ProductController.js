@@ -5,9 +5,20 @@
  * @help        :: See https://sailsjs.com/docs/concepts/actions
  */
 
-const path  = require('path');
+const path = require('path');
 
 module.exports = {
+
+  getCategories: async function (req, res) {
+    try {
+      const products = await Product.find();
+      // Extract unique non-empty categories
+      const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
+      return res.json(categories);
+    } catch (err) {
+      return res.serverError(err);
+    }
+  },
 
   find: async function (req, res) {
     try {
@@ -20,7 +31,7 @@ module.exports = {
         skip: skip,
         limit: limit
       };
-      
+
       if (search) {
         query.where = { name: { contains: search } };
       }
@@ -34,7 +45,7 @@ module.exports = {
         page: page,
         limit: limit,
         totalPages: Math.ceil(total / limit)
-      }); 
+      });
     } catch (err) {
       return res.serverError(err);
     }
@@ -51,13 +62,13 @@ module.exports = {
   },
 
   create: async function (req, res) {
-    
+
     req.file('image').upload({
       maxBytes: 10000000,
       dirname: path.resolve(sails.config.appPath, 'assets/images/products')
     }, async function done(err, uploadedFiles) {
       if (err) return res.serverError(err);
-      
+
       let imageRelativePath = null;
       if (uploadedFiles.length > 0) {
         const filename = path.basename(uploadedFiles[0].fd);
@@ -65,10 +76,18 @@ module.exports = {
       }
 
       try {
+        let categoryName = req.body.category ? req.body.category.trim() : '';
+        if (categoryName) {
+          categoryName = categoryName.charAt(0).toUpperCase() + categoryName.slice(1).toLowerCase();
+        } else {
+          categoryName = 'Chưa phân loại';
+        }
+
         const newProduct = await Product.create({
-          name: req.body.name, 
+          name: req.body.name,
           price: Number(req.body.price),
-          image: imageRelativePath 
+          image: imageRelativePath,
+          category: categoryName
         }).fetch();
 
         return res.status(201).json(newProduct);
@@ -86,10 +105,18 @@ module.exports = {
       dirname: path.resolve(sails.config.appPath, 'assets/images/products')
     }, async function done(err, uploadedFiles) {
       if (err) return res.serverError(err);
-      
+
+      let categoryName = req.body.category ? req.body.category.trim() : '';
+      if (categoryName) {
+        categoryName = categoryName.charAt(0).toUpperCase() + categoryName.slice(1).toLowerCase();
+      } else {
+        categoryName = 'Chưa phân loại';
+      }
+
       let updateData = {
         name: req.body.name,
-        price: Number(req.body.price)
+        price: Number(req.body.price),
+        category: categoryName
       };
 
       if (uploadedFiles.length > 0) {
@@ -117,7 +144,7 @@ module.exports = {
     }
   },
 
-  
+
 
 };
 

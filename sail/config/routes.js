@@ -24,9 +24,10 @@ module.exports.routes = {
   // API Routes
   'GET /api/ping': { action: 'ping' },
   'GET /api/products':          'ProductController.find',
+  'GET /api/categories':        'ProductController.getCategories',
   'GET /api/products/:id':      'ProductController.findOne',
   'POST /api/products':         'ProductController.create',
-  'PUT /api/products/:id':    'ProductController.update',
+  'PUT /api/products/:id':      'ProductController.update',
   'DELETE /api/products/:id':   'ProductController.destroy',
 
   'POST /auth/register': 'AuthController.register',

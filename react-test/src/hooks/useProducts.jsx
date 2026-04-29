@@ -3,6 +3,7 @@ import axios from 'axios';
 
 export default function useProducts() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [pagination, setPagination] = useState({
@@ -38,5 +39,14 @@ export default function useProducts() {
     }
   }, []);
 
-  return { products, setProducts, isLoading, error, fetchProducts, pagination };
+  const fetchCategories = useCallback(async () => {
+    try {
+      const response = await axios.get('http://localhost:1337/api/categories');
+      setCategories(response.data);
+    } catch (err) {
+      console.error('Error fetching categories', err);
+    }
+  }, []);
+
+  return { products, setProducts, isLoading, error, fetchProducts, pagination, categories, fetchCategories };
 }

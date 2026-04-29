@@ -2,9 +2,11 @@ import { useState, useRef } from "react";
 import './product.css';
 import Button from './Button';
 
-function ProductForm({ onAddProduct, editProduct, onUpdateProduct, onCancelEdit }) {
+function ProductForm({ onAddProduct, editProduct, onUpdateProduct, onCancelEdit, categories = [] }) {
   const [name, setName] = useState(editProduct ? editProduct.name : "");
   const [price, setPrice] = useState(editProduct ? editProduct.price : "");
+  const [category, setCategory] = useState(editProduct && editProduct.category ? editProduct.category : "");
+  const [isNewCategory, setIsNewCategory] = useState(false);
   const [image, setImage] = useState(editProduct ? editProduct.image : null);
   const [error, setError] = useState("");
   const fileRef = useRef(null);
@@ -26,6 +28,7 @@ function ProductForm({ onAddProduct, editProduct, onUpdateProduct, onCancelEdit 
     const productData = {
       name,
       price: Number(price),
+      category,
       image,
     };
 
@@ -37,6 +40,7 @@ function ProductForm({ onAddProduct, editProduct, onUpdateProduct, onCancelEdit 
 
     setName("");
     setPrice("");
+    setCategory("");
     setImage(null);
     fileRef.current.value = "";
   }
@@ -60,6 +64,47 @@ function ProductForm({ onAddProduct, editProduct, onUpdateProduct, onCancelEdit 
         required
         className="input-field"
       />
+
+      {!isNewCategory ? (
+        <select
+          value={category}
+          onChange={(e) => {
+            if (e.target.value === "NEW_CATEGORY_OPTION") {
+              setIsNewCategory(true);
+              setCategory("");
+            } else {
+              setCategory(e.target.value);
+            }
+          }}
+          className="input-field"
+          style={{ width: "180px", padding: "10px" }}
+        >
+          <option value="" disabled>-- Chọn danh mục --</option>
+          {categories.map((cat, idx) => (
+            <option key={idx} value={cat}>{cat}</option>
+          ))}
+          <option value="NEW_CATEGORY_OPTION">+ Thêm danh mục mới...</option>
+        </select>
+      ) : (
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <input
+            type="text"
+            placeholder="Tên danh mục mới..."
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="input-field"
+            style={{ width: "180px", margin: 0 }}
+          />
+          <button
+            type="button"
+            onClick={() => { setIsNewCategory(false); setCategory(categories[0] || ""); }}
+            className="cancel-btn"
+            style={{ padding: '0 15px', margin: 0, whiteSpace: 'nowrap' }}
+          >
+            Hủy
+          </button>
+        </div>
+      )}
 
       <input type="file" className="input-field" onChange={handleImage}
         accept="image/*" ref={fileRef} />

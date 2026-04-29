@@ -12,6 +12,7 @@ module.exports = {
     name: { type: 'string', required: true },
     price: { type: 'number', required: true },
     image: { type: 'string' },
+    category: { type: 'string', defaultsTo: 'Chưa phân loại' },
     //  ╔═╗╦═╗╦╔╦╗╦╔╦╗╦╦  ╦╔═╗╔═╗
     //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗
     //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝

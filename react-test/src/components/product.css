@@ -82,7 +82,7 @@ body.dark .product-card__price {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   gap: 10px;
   display: flex;
-  max-width: 950px;
+  max-width: 1200px;
 }
 
 body.dark .product-form {
