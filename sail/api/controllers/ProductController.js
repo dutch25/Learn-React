@@ -79,7 +79,7 @@ module.exports = {
 
   findOne: async function (req, res) {
     try {
-      // Gọi helper vừa tạo
+      // Gọi helper cache-product
       const product = await sails.helpers.cacheProduct(req.params.id)
         .tolerate('notFound', () => {
           return null; // Trả về null nếu helper throw "notFound"

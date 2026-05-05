@@ -34,7 +34,7 @@ export default function ManageProduct() {
       const token = localStorage.getItem('token');
       formData.append('name', productData.name);
       formData.append('price', Number(productData.price));
-      
+
       if (productData.category) {
         formData.append('category', productData.category);
       }
@@ -47,12 +47,10 @@ export default function ManageProduct() {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (products.length === pagination.limit) {
-        fetchProducts(pagination.totalPages + 1, searchTerm);
-      } else {
-        fetchProducts(pagination.totalPages || 1, searchTerm);
-      }
-      
+      // Sau khi thêm, quay về trang 1 để xem dữ liệu mới nhất
+      fetchProducts(1, '');
+      setSearchTerm('');
+
       fetchCategories();
       alert("Thêm sản phẩm thành công!");
     } catch (err) {
@@ -75,7 +73,7 @@ export default function ManageProduct() {
       } else {
         fetchProducts(pagination.page, searchTerm);
       }
-      
+
       fetchCategories();
 
       alert("Xóa sản phẩm thành công!");
@@ -155,9 +153,9 @@ export default function ManageProduct() {
         onEdit={handleEditProduct}
         showActions={true}
       />
-      <Pagination 
-        pagination={pagination} 
-        onPageChange={handlePageChange} 
+      <Pagination
+        pagination={pagination}
+        onPageChange={handlePageChange}
       />
     </div>
   );

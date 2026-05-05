@@ -59,7 +59,7 @@ export default function ProductDetail() {
           </span>
           <h1 className="product-detail-title">{product.name}</h1>
           <p className="product-detail-price">
-            {product.price}K
+            {product.price}₫
           </p>
 
           <div className="product-detail-desc-box">

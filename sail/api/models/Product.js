@@ -33,8 +33,11 @@ module.exports = {
   afterUpdate: async function (updatedRecord, proceed) {
     try {
       const redis = await sails.helpers.redisClient();
-      await redis.del(`product:${updatedRecord.id}`);
-      sails.log.info(`[CACHE CLEAR] Đã xóa cache của sản phẩm ${updatedRecord.id} vì vừa cập nhật.`);
+      const result = await redis.del(`product:${updatedRecord.id}`);
+      
+      if (result === 1) {
+        sails.log.info(`[CACHE CLEAR] Đã xóa cache của sản phẩm ${updatedRecord.id} vì vừa cập nhật.`);
+      }
     } catch (err) {
       sails.log.error('Lỗi khi xóa cache Redis:', err);
     }
@@ -44,8 +47,11 @@ module.exports = {
   afterDestroy: async function (destroyedRecord, proceed) {
     try {
       const redis = await sails.helpers.redisClient();
-      await redis.del(`product:${destroyedRecord.id}`);
-      sails.log.info(`[CACHE CLEAR] Đã xóa cache của sản phẩm ${destroyedRecord.id} vì đã xóa khỏi DB.`);
+      const result = await redis.del(`product:${destroyedRecord.id}`);
+
+      if (result === 1) {
+        sails.log.info(`[CACHE CLEAR] Đã xóa cache của sản phẩm ${destroyedRecord.id} vì đã xóa khỏi DB.`);
+      }
     } catch (err) {
       sails.log.error('Lỗi khi xóa cache Redis:', err);
     }

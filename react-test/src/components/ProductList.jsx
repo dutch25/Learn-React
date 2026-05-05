@@ -1,6 +1,6 @@
 import React from 'react';
 import './product.css';
-import Button from './Button'; 
+import Button from './Button';
 import { Link } from 'react-router-dom';
 
 
@@ -16,8 +16,8 @@ function ProductList({ products, onDelete, onEdit, showActions = false }) {
           let imageSrc = "";
           if (product.image) {
             if (typeof product.image === 'string') {
-              imageSrc = product.image.startsWith('http') 
-                ? product.image 
+              imageSrc = product.image.startsWith('http')
+                ? product.image
                 : `${Server_URL}${product.image}`;
             } else {
               imageSrc = URL.createObjectURL(product.image);
@@ -28,20 +28,20 @@ function ProductList({ products, onDelete, onEdit, showActions = false }) {
             <div className="product-card" key={product.id}>
               <Link to={`/products/${product.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 {product.image && (
-                  <img 
-                    className="product-card__image"  
-                    src={imageSrc} 
-                    alt={product.name} 
+                  <img
+                    className="product-card__image"
+                    src={imageSrc}
+                    alt={product.name}
                     onError={(e) => { e.target.src = 'https://placehold.co/200x200?text=No+Image'; }}
                   />
                 )}
-                
+
                 <div className="product-card__content">
                   <h3 className="product-card__name">{product.name}</h3>
-                  <p className="product-card__price">{product.price}K</p>
+                  <p className="product-card__price">{product.price}₫</p>
                 </div>
               </Link>
-                
+
               {showActions && onDelete && (
                 <div style={{ display: 'flex', gap: '10px', marginTop: '8px', padding: '0 10px 10px' }}>
                   <Button variant="edit" onClick={() => onEdit(product)}>Edit</Button>

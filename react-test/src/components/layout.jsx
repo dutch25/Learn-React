@@ -34,7 +34,7 @@ export default function Layout() {
   return (
     <div className="cms-container">
       <header className="cms-header">
-        <h1 className="cms-title"><Link to="/" style={{ textDecoration: 'none' }}>CMS</Link></h1>
+        <h1 className="cms-title"><Link to="/products" style={{ textDecoration: 'none' }}>CMS</Link></h1>
       </header>
       <div className="cms-body">
         <aside className="cms-sidebar">
