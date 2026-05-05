@@ -13,6 +13,7 @@ module.exports = {
     price: { type: 'number', required: true },
     image: { type: 'string' },
     category: { type: 'string', defaultsTo: 'Chưa phân loại' },
+    status: { type: 'string', isIn: ['active', 'inactive'], defaultsTo: 'active' },
     //  ╔═╗╦═╗╦╔╦╗╦╔╦╗╦╦  ╦╔═╗╔═╗
     //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗
     //  ╩  ╩╚═╩╩ ╩╩ ╩ ╩ ╚╝ ╚═╝╚═╝
@@ -29,7 +30,6 @@ module.exports = {
 
   },
 
-  // Lifecycle Callbacks
   afterUpdate: async function (updatedRecord, proceed) {
     try {
       const redis = await sails.helpers.redisClient();

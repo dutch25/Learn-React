@@ -24,6 +24,7 @@ module.exports.routes = {
   // API Routes
   'GET /api/ping': { action: 'ping' },
   'GET /api/products':          'ProductController.find',
+  'GET /api/test-native':       'ProductController.testNativeQuery',
   'GET /api/categories':        'ProductController.getCategories',
   'GET /api/products/:id':      'ProductController.findOne',
   'POST /api/products':         'ProductController.create',

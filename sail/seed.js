@@ -41,31 +41,43 @@ async function seed() {
     };
 
     const categories = Object.keys(categoryImageMap);
+    const statuses = ['active', 'inactive'];
 
-    // Delete previously seeded products (those with "Pro X" in the name)
-    await collection.deleteMany({ name: { $regex: /Pro X/ } });
+    console.log('Đang dọn dẹp dữ liệu cũ...');
+    await collection.deleteMany({});
 
-    const products = [];
-    for (let i = 1; i <= 1000; i++) {
-      const cat = categories[Math.floor(Math.random() * categories.length)];
-      const categoryImages = categoryImageMap[cat];
-      const img = categoryImages[Math.floor(Math.random() * categoryImages.length)];
-      const price = Math.floor(Math.random() * 5000) * 1000 + 100000;
+    const totalRecords = 200000;
+    const chunkSize = 20000;
+    const totalChunks = totalRecords / chunkSize;
 
-      products.push({
-        name: `${cat} Pro X${Math.floor(Math.random() * 9000) + 1000}`,
-        price: price,
-        category: cat,
-        image: img,
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      });
+    console.log(`Bắt đầu tạo ${totalRecords} sản phẩm (chia làm ${totalChunks} đợt)...`);
+
+    for (let chunk = 0; chunk < totalChunks; chunk++) {
+      const products = [];
+      for (let i = 0; i < chunkSize; i++) {
+        const cat = categories[Math.floor(Math.random() * categories.length)];
+        const categoryImages = categoryImageMap[cat];
+        const img = categoryImages[Math.floor(Math.random() * categoryImages.length)];
+        const price = Math.floor(Math.random() * 10000) * 1000 + 50000;
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+        products.push({
+          name: `${cat} Ultra ${chunk * chunkSize + i + 1}`,
+          price: price,
+          category: cat,
+          image: img,
+          status: status,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
+      await collection.insertMany(products);
+      console.log(`- Đã xong đợt ${chunk + 1}/${totalChunks} (${(chunk + 1) * chunkSize} bản ghi)`);
     }
 
-    await collection.insertMany(products);
-    console.log(`Đã tạo thành công ${products.length} sản phẩm ngẫu nhiên với hình ảnh đúng chuẩn.`);
+    console.log('DONE! Đã tạo thành công 200,000 sản phẩm.');
   } catch (err) {
-    console.error(err);
+    console.error('Lỗi khi seed dữ liệu:', err);
   } finally {
     await client.close();
   }

@@ -11,10 +11,34 @@ module.exports = {
 
   getCategories: async function (req, res) {
     try {
-      const products = await Product.find();
-      // Extract unique non-empty categories
-      const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
-      return res.json(categories);
+      const db = Product.getDatastore().manager;
+      const collectionName = Product.tableName || Product.identity;
+      const categories = await db.collection(collectionName).distinct('category');
+
+      return res.json(categories.filter(Boolean));
+    } catch (err) {
+      return res.serverError(err);
+    }
+  },
+
+  testNativeQuery: async function (req, res) {
+    try {
+      const db = Product.getDatastore().manager;
+      const collectionName = Product.tableName || Product.identity;
+      const collection = db.collection(collectionName);
+      // Tìm Mouse, đang Active, và Sắp xếp theo Giá giảm dần
+      const stats = await collection.find({
+        category: 'Mouse',
+        status: 'active'
+      })
+        .sort({ price: -1 })
+        .explain("executionStats");
+
+      // Trả về báo cáo chi tiết
+      return res.json({
+        message: "Báo cáo hiệu năng truy vấn",
+        executionStats: stats.executionStats
+      });
     } catch (err) {
       return res.serverError(err);
     }
@@ -28,16 +52,18 @@ module.exports = {
       const search = req.query.search || '';
 
       let query = {
+        where: { status: 'active' },
         skip: skip,
-        limit: limit
+        limit: limit,
+        sort: 'price DESC'
       };
 
       if (search) {
-        query.where = { name: { contains: search } };
+        query.where.name = { contains: search };
       }
 
       const products = await Product.find(query);
-      const total = await Product.count(query.where || {});
+      const total = await Product.count(query.where);
 
       return res.json({
         data: products,

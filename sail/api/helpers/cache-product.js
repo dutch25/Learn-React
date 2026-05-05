@@ -23,7 +23,7 @@ module.exports = {
 
   fn: async function (inputs, exits) {
     const { id } = inputs;
-    
+
     // Gọi Helper redisClient để lấy kết nối dùng chung
     const redis = await sails.helpers.redisClient();
     const cacheKey = `product:${id}`;
@@ -31,7 +31,7 @@ module.exports = {
     try {
       // 1. Tìm trong Cache trước
       const cachedData = await redis.get(cacheKey);
-      
+
       if (cachedData) {
         sails.log.info(`[CACHE HIT] Lấy sản phẩm ${id} từ Redis`);
         return exits.success(JSON.parse(cachedData));
@@ -58,5 +58,4 @@ module.exports = {
       return exits.success(product);
     }
   }
-
 };

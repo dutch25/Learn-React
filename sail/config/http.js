@@ -42,23 +42,23 @@ module.exports.http = {
       'staticAssets',
     ],
 
-    cors: (function() {
-      return function(req, res, next) {
+    cors: (function () {
+      return function (req, res, next) {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Authorization');
-        
+
         if (req.method === 'OPTIONS') {
-          return res.send(200);
+          return res.sendStatus(200);
         }
         return next();
       };
     })(),
 
-    staticAssets: (function() {
-       const express = require('express');
-       const path = require('path');
-       return express.static(require('path').resolve(__dirname, '../assets'));
+    staticAssets: (function () {
+      const express = require('express');
+      const path = require('path');
+      return express.static(require('path').resolve(__dirname, '../assets'));
     })(),
 
 
