@@ -13,16 +13,20 @@ export default function useProducts() {
     totalPages: 0
   });
 
-  const fetchProducts = useCallback(async (page = 1, search = '') => {
+  const fetchProducts = useCallback(async (page = 1, search = '', category = '') => {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('token');
-      const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
-      const url = token 
-        ? `http://localhost:1337/api/products?limit=6&page=${page}&token=${token}${searchParam}`
-        : `http://localhost:1337/api/products?limit=6&page=${page}${searchParam}`;
       
-      const response = await axios.get(url);
+      const response = await axios.get('http://localhost:1337/api/products', {
+        params: {
+          limit: 6,
+          page: page,
+          search: search || undefined,
+          category: category || undefined
+        },
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
       setProducts(response.data.data);
       setPagination({
         page: response.data.page,

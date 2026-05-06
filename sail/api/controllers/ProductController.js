@@ -50,6 +50,7 @@ module.exports = {
       const page = parseInt(req.query.page) || 1;
       const skip = (page - 1) * limit;
       const search = req.query.search || '';
+      const category = req.query.category || '';
 
       let query = {
         where: { status: 'active' },
@@ -60,6 +61,10 @@ module.exports = {
 
       if (search) {
         query.where.name = { contains: search };
+      }
+
+      if (category) {
+        query.where.category = category;
       }
 
       const products = await Product.find(query);

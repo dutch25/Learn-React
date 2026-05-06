@@ -9,6 +9,7 @@ export default function ManageProduct() {
   const { products, setProducts, isLoading, error, fetchProducts, pagination, categories, fetchCategories } = useProducts();
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   useEffect(() => {
     fetchCategories();
@@ -16,15 +17,15 @@ export default function ManageProduct() {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      fetchProducts(1, searchTerm);
+      fetchProducts(1, searchTerm, selectedCategory);
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, fetchProducts]);
+  }, [searchTerm, selectedCategory, fetchProducts]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
-      fetchProducts(newPage, searchTerm);
+      fetchProducts(newPage, searchTerm, selectedCategory);
     }
   };
 
@@ -47,9 +48,8 @@ export default function ManageProduct() {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      // Sau khi thêm, quay về trang 1 để xem dữ liệu mới nhất
-      fetchProducts(1, '');
-      setSearchTerm('');
+      // Sau khi thêm, quay về trang 1 của danh mục hiện tại để xem dữ liệu mới nhất
+      fetchProducts(1, searchTerm, selectedCategory);
 
       fetchCategories();
       alert("Thêm sản phẩm thành công!");
@@ -69,9 +69,9 @@ export default function ManageProduct() {
       });
 
       if (products.length === 1 && pagination.page > 1) {
-        fetchProducts(pagination.page - 1, searchTerm);
+        fetchProducts(pagination.page - 1, searchTerm, selectedCategory);
       } else {
-        fetchProducts(pagination.page, searchTerm);
+        fetchProducts(pagination.page, searchTerm, selectedCategory);
       }
 
       fetchCategories();
@@ -106,7 +106,7 @@ export default function ManageProduct() {
 
       setProducts(products.map(p => p.id === id ? response.data : p));
       setEditingProduct(null);
-      fetchProducts(pagination.page, searchTerm);
+      fetchProducts(pagination.page, searchTerm, selectedCategory);
       fetchCategories();
       alert("Cập nhật sản phẩm thành công!");
     } catch (err) {
@@ -136,6 +136,19 @@ export default function ManageProduct() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        
+        <select 
+          className="category-filter"
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          style={{ padding: '10px', borderRadius: '8px', border: '1px solid #ddd', marginLeft: '10px' }}
+        >
+          <option value="">Tất cả danh mục</option>
+          {categories.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+
         {isLoading && <span className="search-loading">Đang tải...</span>}
       </div>
 

@@ -44,7 +44,7 @@ export default function Layout() {
 
               <li><Link to="/products" className="LinkDay" >Products</Link></li>
               {user?.role === 'manager' && (
-                <li><Link to="/manage" className="LinkDay" >Add Product</Link></li>
+                <li><Link to="/manage" className="LinkDay" >Manage Product</Link></li>
               )}
               <li><Link to="/about" className="LinkDay" >About</Link></li>
               <hr />
