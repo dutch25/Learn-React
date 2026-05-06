@@ -84,10 +84,20 @@ module.exports = {
 
   findOne: async function (req, res) {
     try {
+      const productId = req.params.id;
+
+      // Tăng điểm xếp hạng trên Redis (Ranking)
+      try {
+        const redis = await sails.helpers.redisClient();
+        await redis.zincrby('product_rankings', 1, productId);
+      } catch (redisErr) {
+        sails.log.error('Lỗi khi cập nhật ranking:', redisErr);
+      }
+
       // Gọi helper cache-product
-      const product = await sails.helpers.cacheProduct(req.params.id)
+      const product = await sails.helpers.cacheProduct(productId)
         .tolerate('notFound', () => {
-          return null; // Trả về null nếu helper throw "notFound"
+          return null;
         });
 
       if (!product) return res.notFound('Không tìm thấy sản phẩm');

@@ -46,6 +46,7 @@ export default function Layout() {
               {user?.role === 'manager' && (
                 <li><Link to="/manage" className="LinkDay" >Manage Product</Link></li>
               )}
+              <li><Link to="/top-views" className="LinkDay" >Top Views</Link></li>
               <li><Link to="/about" className="LinkDay" >About</Link></li>
               <hr />
               {token ? (

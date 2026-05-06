@@ -31,6 +31,8 @@ module.exports.routes = {
   'PUT /api/products/:id':      'ProductController.update',
   'DELETE /api/products/:id':   'ProductController.destroy',
 
+  'GET /api/dashboard/top-views': 'DashboardController.getTopViews',
+
   'POST /auth/register': 'AuthController.register',
   'POST /auth/login':    'AuthController.login',
 
